@@ -89,6 +89,27 @@ Na matriz de confusão, acertei **4.461 reservas não canceladas** e **1.634 can
 
 A base contém registros de 2017 e 2018. A divisão avalia perfis diferentes, sem simular períodos futuros. Não encontrei documentação suficiente para confirmar o momento de atualização de preço e pedidos especiais. A previsão é uma estimativa e pode apresentar resultados diferentes em outros hotéis ou períodos.
 
+## Como obter o projeto
+
+### Pelo GitHub, usando Git
+
+Com Git instalado, abra um terminal e execute:
+
+```bash
+git clone https://github.com/laismedeiros19/Machine-Learning.git
+cd Machine-Learning
+```
+
+Essa pasta contém os arquivos necessários, incluindo o dataset e o modelo exportado. Execute os comandos Docker da próxima seção dentro dela.
+
+### Sem Git, baixando o ZIP
+
+1. Acesse https://github.com/laismedeiros19/Machine-Learning.
+2. Clique em **Code → Download ZIP**.
+3. Extraia o arquivo e abra um terminal dentro da pasta **Machine-Learning-main**, onde estão `Dockerfile` e `docker-compose.yml`.
+
+Se recebeu o ZIP da entrega diretamente, extraia-o e abra um terminal na pasta **projeto_hoteis**. Depois siga os mesmos comandos Docker abaixo.
+
 ## Execução com Docker
 
 É necessário ter **Docker e Docker Compose** instalados e o serviço Docker em execução. A primeira construção precisa de internet para baixar a imagem Python e as dependências.
