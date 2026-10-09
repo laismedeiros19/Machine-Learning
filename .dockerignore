@@ -1,0 +1,13 @@
+.venv/
+.git/
+.agents/
+.codex/
+.aws/
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+*.zip
+dataset/
+notebook.ipynb
+*.pdf
+README.md
