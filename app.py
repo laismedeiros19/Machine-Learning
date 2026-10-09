@@ -6,7 +6,6 @@ import joblib
 import pandas as pd
 from flask import Flask, jsonify, request, render_template
 
-# Carreguei a Pipeline uma vez, ao iniciar a aplicação.
 app = Flask(__name__)
 app.json.ensure_ascii = False
 modelo = joblib.load(Path(__file__).resolve().parent / "modelo.pkl")
@@ -16,13 +15,11 @@ numericos = [campo for campo in atributos if campo not in categoricos]
 rotulos = {0: "Not_Canceled", 1: "Canceled"}
 
 
-# Criei uma página com formulário para testar a API pelo navegador.
 @app.get("/")
 def inicio():
     return render_template("index.html")
 
 
-# Conferi os campos, tipos e regras básicas antes de enviar a reserva ao modelo.
 def validar_reserva(reserva):
     if not isinstance(reserva, dict):
         raise ValueError("Envie um objeto JSON com os atributos de uma reserva.")
@@ -67,7 +64,6 @@ def validar_reserva(reserva):
     return dados
 
 
-# Recebi o JSON e usei a Pipeline exportada, sem treinar novamente.
 @app.post("/predict")
 def predict():
     if not request.is_json:

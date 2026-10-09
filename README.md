@@ -2,6 +2,7 @@
 
 **Aluna:** Lais Gabrielly Vital Medeiros  
 **Disciplina:** Aprendizado de Máquina — Avaliação 1, 2026/2
+**GitHub:** https://github.com/laismedeiros19/Machine-Learning
 
 Desenvolvi um projeto de **classificação binária** para prever se uma reserva será cancelada. Comparei três algoritmos, exportei o modelo escolhido e criei uma API Flask com uma interface para testar as previsões pelo navegador.
 
