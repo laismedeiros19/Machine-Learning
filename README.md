@@ -89,122 +89,109 @@ Na matriz de confusão, acertei **4.461 reservas não canceladas** e **1.634 can
 
 A base contém registros de 2017 e 2018. A divisão avalia perfis diferentes, sem simular períodos futuros. Não encontrei documentação suficiente para confirmar o momento de atualização de preço e pedidos especiais. A previsão é uma estimativa e pode apresentar resultados diferentes em outros hotéis ou períodos.
 
-## Como obter o projeto
+## Como executar: comece por aqui
 
-### Pelo GitHub, usando Git
+Para testar o projeto, siga os passos **1 a 7** abaixo. O modelo já está treinado e o dataset já acompanha o projeto.
 
-Com Git instalado, abra um terminal e execute:
+### 1. Instale e abra o Docker
+
+Instale o Docker seguindo as instruções para seu sistema: https://docs.docker.com/get-started/get-docker/.
+
+- **Windows ou macOS:** instale o Docker Desktop e abra o aplicativo. Aguarde ele indicar que está funcionando.
+- **Linux:** instale o Docker Engine e o plugin Docker Compose pelo guia oficial e inicie o serviço Docker.
+
+A primeira execução precisa de internet para baixar a imagem e as bibliotecas. Para este caminho, não é necessário instalar Python no computador.
+
+### 2. Baixe os arquivos do projeto
+
+1. Abra https://github.com/laismedeiros19/Machine-Learning.
+2. Clique no botão verde **Code**.
+3. Clique em **Download ZIP**.
+4. Localize o arquivo baixado e extraia todo o conteúdo.
+5. Abra a pasta **Machine-Learning-main**. Ela deve conter `README.md`, `Dockerfile`, `docker-compose.yml` e `modelo.pkl`.
+
+Se recebeu o ZIP da entrega, extraia-o e use a pasta **projeto_hoteis**. Não execute o projeto de dentro do arquivo ZIP.
+
+**Alternativa para quem já usa Git:**
 
 ```bash
 git clone https://github.com/laismedeiros19/Machine-Learning.git
 cd Machine-Learning
 ```
 
-Essa pasta contém os arquivos necessários, incluindo o dataset e o modelo exportado. Execute os comandos Docker da próxima seção dentro dela.
+Nesse caso, a pasta se chama **Machine-Learning**. Continue no passo 3.
 
-### Sem Git, baixando o ZIP
+### 3. Abra o terminal na pasta correta
 
-1. Acesse https://github.com/laismedeiros19/Machine-Learning.
-2. Clique em **Code → Download ZIP**.
-3. Extraia o arquivo e abra um terminal dentro da pasta **Machine-Learning-main**, onde estão `Dockerfile` e `docker-compose.yml`.
+Uma forma simples é usar o VS Code:
 
-Se recebeu o ZIP da entrega diretamente, extraia-o e abra um terminal na pasta **projeto_hoteis**. Depois siga os mesmos comandos Docker abaixo.
-
-## Execução com Docker
-
-É necessário ter **Docker e Docker Compose** instalados e o serviço Docker em execução. A primeira construção precisa de internet para baixar a imagem Python e as dependências.
-
-Abra um terminal na pasta do projeto e execute o comando solicitado na avaliação:
+1. Clique em **Arquivo → Abrir Pasta** e selecione a pasta extraída no passo 2.
+2. Clique em **Terminal → Novo Terminal**.
+3. O terminal deve abrir nessa pasta. Para conferir, execute:
 
 ```bash
-docker-compose up -d --build
+ls
 ```
 
-Em instalações recentes, o comando equivalente é:
+No Prompt de Comando do Windows, use `dir` em vez de `ls`. A lista deve mostrar `Dockerfile` e `docker-compose.yml`. Se não mostrar, abra a pasta que contém esses arquivos.
+
+Quem não usa VS Code pode abrir o terminal do sistema e usar `cd` para entrar na pasta extraída.
+
+### 4. Inicie a aplicação
+
+Copie este comando, cole no terminal e pressione Enter:
 
 ```bash
 docker compose up -d --build
 ```
 
-Abra **http://localhost:5000/** para testar o formulário. Ele já vem preenchido com um exemplo. Clique em **Prever cancelamento** para consultar a API.
+Aguarde o comando terminar. Na primeira vez, o download e a instalação podem levar alguns minutos. Esse comando cria o ambiente e inicia a aplicação em segundo plano.
 
-Para conferir o estado, os logs e encerrar a aplicação:
+O PDF usa a escrita abaixo, que funciona em instalações que oferecem o comando com hífen:
+
+```bash
+docker-compose up -d --build
+```
+
+Use **uma** dessas formas, conforme sua instalação. Nos passos seguintes, os exemplos usam `docker compose`.
+
+Confira se a aplicação iniciou:
 
 ```bash
 docker compose ps
-docker compose logs api
-docker compose down
 ```
 
-Se estiver executando `app.py` manualmente, encerre-o com **Ctrl + C** antes de iniciar o Docker para liberar a porta 5000. Como alternativa, em Linux/macOS:
+Espere aparecer **Up** e **healthy**. Se aparecer `starting`, aguarde alguns segundos e execute o comando novamente.
+
+### 5. Teste pelo navegador
+
+1. Abra o navegador.
+2. Digite **http://localhost:5000/** na barra de endereço.
+3. O formulário já vem preenchido com uma reserva de exemplo.
+4. Clique em **Prever cancelamento**.
+5. A resposta esperada é **Não cancelamento previsto**, com probabilidade de cancelamento de **20,42%**.
+6. Altere os campos e clique novamente para testar outras reservas.
+7. Clique em **Restaurar exemplo** para voltar aos valores iniciais.
+
+A classe pode continuar igual depois de alterar um campo. A previsão é uma estimativa, não uma garantia de que a reserva será mantida ou cancelada.
+
+### 6. Teste a API pelo terminal (opcional)
+
+Este teste atende ao endpoint exigido na avaliação e funciona sem usar o formulário. Mantenha a aplicação iniciada no passo 4 e abra outro terminal **na mesma pasta do projeto**.
+
+O arquivo `exemplo_reserva.json` já contém uma reserva completa. Em Linux/macOS, execute:
 
 ```bash
-PORTA_HOST=5001 docker compose up -d --build
+curl -i -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d @exemplo_reserva.json
 ```
 
-Nesse caso, use **http://localhost:5001/** e substitua a porta no curl. No PowerShell, defina `$env:PORTA_HOST="5001"` antes do comando Compose.
+No Windows, execute:
 
-A imagem inclui a API, o modelo exportado e a interface. O contêiner **não realiza treinamento** na inicialização ou nas requisições.
-
-## Execução local e reprodução do treinamento
-
-Use **Python 3.12**. Os comandos abaixo são para Linux/macOS, a partir da pasta do projeto:
-
-```bash
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python app.py
+```powershell
+curl.exe -i -X POST http://localhost:5000/predict -H "Content-Type: application/json" -d "@exemplo_reserva.json"
 ```
 
-No Windows, crie o ambiente com `py -3.12 -m venv .venv` e use `.venv\Scripts\python.exe` no lugar de `.venv/bin/python`.
-
-Para reproduzir o fluxo completo, instale também as dependências do notebook:
-
-```bash
-.venv/bin/python -m pip install -r requirements-treinamento.txt
-.venv/bin/python -m jupyter notebook notebook.ipynb
-```
-
-Selecione o kernel desse ambiente e execute as células em ordem, a partir da questão 1. O CSV deve estar no caminho indicado. O notebook contempla carregamento, preparação, treinamento, avaliação e exportação; a questão 5 grava novamente `modelo.pkl`. Reinicie a aplicação depois de gerar um novo modelo.
-
-## API de inferência
-
-**Endpoint:** `POST /predict`  
-**Content-Type:** `application/json`
-
-Envie um objeto com os 17 atributos da tabela. Os atributos numéricos devem ser números, as contagens inteiras e as categorias textos. Não envie `Booking_ID` nem `booking_status`. A API verifica campos, tipos, data válida, valores não negativos, presença de hóspedes e pelo menos uma noite.
-
-### Exemplo completo de requisição
-
-Com a aplicação em execução, abra outro terminal:
-
-```bash
-curl -X POST http://localhost:5000/predict \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "no_of_adults": 2,
-    "no_of_children": 0,
-    "no_of_weekend_nights": 1,
-    "no_of_week_nights": 2,
-    "required_car_parking_space": 0,
-    "lead_time": 60,
-    "arrival_year": 2018,
-    "arrival_month": 10,
-    "arrival_date": 15,
-    "repeated_guest": 0,
-    "no_of_previous_cancellations": 0,
-    "no_of_previous_bookings_not_canceled": 0,
-    "avg_price_per_room": 100.0,
-    "no_of_special_requests": 1,
-    "type_of_meal_plan": "Meal Plan 1",
-    "room_type_reserved": "Room_Type 1",
-    "market_segment_type": "Online"
-  }'
-```
-
-No PowerShell, use `curl.exe` ou uma ferramenta equivalente para enviar esse JSON.
-
-### Resposta obtida
+A resposta deve ter **HTTP 200** e este conteúdo JSON (a ordem dos campos pode variar):
 
 ```json
 {
@@ -214,9 +201,192 @@ No PowerShell, use `curl.exe` ou uma ferramenta equivalente para enviar esse JSO
 }
 ```
 
-A classe 0 indica não cancelamento; 1 indica cancelamento. A probabilidade é uma estimativa do modelo. Usei o limite padrão de 0,5 para definir a classe.
+A classe **0** significa não cancelamento e **1** significa cancelamento. A probabilidade `0.2042` corresponde a **20,42%**.
 
-Uma entrada inválida retorna HTTP 400 com `{"erro": "mensagem"}`. Um conteúdo sem o tipo JSON retorna HTTP 415. O formulário envia os dados ao mesmo endpoint e exibe o resultado.
+Para testar outra reserva, abra `exemplo_reserva.json`, altere os valores, salve e execute o comando novamente. O arquivo original tem este conteúdo:
+
+```json
+{
+  "no_of_adults": 2,
+  "no_of_children": 0,
+  "no_of_weekend_nights": 1,
+  "no_of_week_nights": 2,
+  "required_car_parking_space": 0,
+  "lead_time": 60,
+  "arrival_year": 2018,
+  "arrival_month": 10,
+  "arrival_date": 15,
+  "repeated_guest": 0,
+  "no_of_previous_cancellations": 0,
+  "no_of_previous_bookings_not_canceled": 0,
+  "avg_price_per_room": 100.0,
+  "no_of_special_requests": 1,
+  "type_of_meal_plan": "Meal Plan 1",
+  "room_type_reserved": "Room_Type 1",
+  "market_segment_type": "Online"
+}
+```
+
+A API recebe os 17 atributos usados no modelo. Envie números nas colunas numéricas, contagens inteiras e textos nas categorias. Não envie `Booking_ID` nem `booking_status`.
+
+Entradas inválidas retornam **HTTP 400** com uma mensagem em JSON. Conteúdo sem `Content-Type: application/json` retorna **HTTP 415**. A API verifica campos, tipos, data válida, valores não negativos, pelo menos um hóspede e uma noite.
+
+### 7. Encerre a aplicação
+
+Quando terminar, execute na pasta do projeto:
+
+```bash
+docker compose down
+```
+
+Para usar novamente, repita o passo 4. O dataset e o modelo continuam na pasta.
+
+## Se algo não funcionar
+
+| O que apareceu | O que fazer |
+|---|---|
+| `docker: command not found` ou comando não reconhecido | Confira a instalação do Docker no passo 1 e reabra o terminal. |
+| Erro ao conectar ao serviço Docker | Abra o Docker Desktop ou confira se o serviço Docker está iniciado no Linux. |
+| `permission denied` ao acessar o Docker | Confira as permissões do usuário conforme o guia de instalação do Docker para seu sistema. |
+| `no configuration file provided` | Abra o terminal na pasta que contém `docker-compose.yml`. |
+| Porta 5000 já está em uso | Encerre a API manual com Ctrl + C no terminal onde ela está aberta ou use a porta alternativa abaixo. |
+| Página não abre | Confira `docker compose ps` e os logs com o comando abaixo. |
+| `405 Method Not Allowed` ao abrir `/predict` no navegador | Para o formulário, abra somente `http://localhost:5000/`. A rota `/predict` recebe POST com JSON, como no passo 6. |
+
+Para ver mensagens da aplicação:
+
+```bash
+docker compose logs api
+```
+
+### Como usar a porta 5001
+
+Em Linux/macOS:
+
+```bash
+PORTA_HOST=5001 docker compose up -d --build
+```
+
+No PowerShell do Windows:
+
+```powershell
+$env:PORTA_HOST="5001"
+docker compose up -d --build
+```
+
+Abra **http://localhost:5001/**. No comando curl, troque também `5000` por `5001`.
+
+## Alternativa: executar a aplicação sem Docker
+
+Use este caminho se quiser executar diretamente com Python. Não é necessário seguir esta seção se o Docker já funcionou.
+
+### 1. Prepare o computador e a pasta
+
+Instale **Python 3.12** pelo site https://www.python.org/downloads/. No Windows, marque a opção de adicionar Python ao PATH durante a instalação.
+
+Baixe e extraia o projeto e abra o terminal na pasta, como nos passos 2 e 3 do guia principal. Encerre o Docker com `docker compose down` caso esteja usando a porta 5000.
+
+### 2. Crie o ambiente Python
+
+Em Linux/macOS:
+
+```bash
+python3.12 -m venv .venv
+```
+
+No Windows:
+
+```powershell
+py -3.12 -m venv .venv
+```
+
+### 3. Instale as bibliotecas
+
+Em Linux/macOS:
+
+```bash
+.venv/bin/python -m pip install -r requirements.txt
+```
+
+No Windows:
+
+```powershell
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+### 4. Inicie a API
+
+Em Linux/macOS:
+
+```bash
+.venv/bin/python app.py
+```
+
+No Windows:
+
+```powershell
+.venv\Scripts\python.exe app.py
+```
+
+Deixe esse terminal aberto. Quando aparecer `Running on http://127.0.0.1:5000`, abra **http://localhost:5000/** e teste o formulário. Para testar pelo curl, use outro terminal e siga o passo 6 do guia principal.
+
+### 5. Encerre
+
+No terminal que executa a API, pressione **Ctrl + C**.
+
+## Como executar o notebook e reproduzir o treinamento
+
+O modelo exportado já permite testar a aplicação. Siga esta seção se quiser refazer o carregamento, a preparação, o treinamento, a avaliação e a exportação.
+
+### 1. Crie o ambiente
+
+Instale Python 3.12, abra o terminal na pasta do projeto e crie `.venv`, seguindo os passos 1 e 2 da execução sem Docker. Confira se existe `dataset/Hotel Reservations.csv`.
+
+### 2. Instale as dependências do notebook
+
+Em Linux/macOS:
+
+```bash
+.venv/bin/python -m pip install -r requirements-treinamento.txt
+```
+
+No Windows:
+
+```powershell
+.venv\Scripts\python.exe -m pip install -r requirements-treinamento.txt
+```
+
+### 3. Abra o notebook
+
+Em Linux/macOS:
+
+```bash
+.venv/bin/python -m jupyter notebook notebook.ipynb
+```
+
+No Windows:
+
+```powershell
+.venv\Scripts\python.exe -m jupyter notebook notebook.ipynb
+```
+
+O Jupyter abre no navegador. Se não abrir automaticamente, copie no navegador o endereço mostrado no terminal.
+
+### 4. Execute as células
+
+1. Selecione o kernel Python desse ambiente.
+2. Execute as células em ordem, começando pela questão 1, com **Shift + Enter**.
+3. Aguarde as etapas de validação e treinamento terminarem.
+4. Confira as tabelas, gráficos e interpretações da questão 4.
+5. A questão 5 salva novamente `modelo.pkl` com a Pipeline completa.
+
+Não altere os parâmetros ou use o teste para procurar métricas melhores ao reproduzir o resultado entregue.
+
+### 5. Use o modelo gerado
+
+Reinicie a aplicação local para carregar o novo arquivo. Se usar Docker, execute `docker compose up -d --build` para incluir o modelo novo na imagem.
+
+A aplicação carrega a Pipeline pronta e não realiza treinamento durante a inicialização ou a cada requisição.
 
 ## Estrutura do projeto
 
@@ -230,6 +400,7 @@ projeto/
 ├── app.py
 ├── requirements.txt
 ├── requirements-treinamento.txt
+├── exemplo_reserva.json
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .dockerignore
